@@ -13,7 +13,13 @@ import numpy as np
 df=pd.read_csv('data.csv')
 # print(list(df))
 df_n=df[['Name','Age','Overall','Potential']] #buat df lebih mudah dilihat
-
+#Check if there's any missing values in the dataset
+df_n=df_n.replace(['-','n.a'],np.nan)
+df_n=df_n.fillna(0)
+print('Jumlah data yang bernilai 0 :')
+print(df_n.isnull().sum())
+# print(len(df))
+# print(df.head())
 
 xao=df_n[(df_n['Age']<=25)&(df_n['Overall']>=80)&(df_n['Potential']>=80)]
 ind_xao=xao.index.tolist() #index yang target
