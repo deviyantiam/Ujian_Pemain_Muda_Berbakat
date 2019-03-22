@@ -47,11 +47,8 @@ fifaTree.fit(x_trainset,y_trainset)
 dfpred=pd.read_csv('prediksisoal2.csv')
 print(dfpred.head())
 x=dfpred.iloc[:,1:]
-# print(x)
 prediksi=fifaTree.predict(x)
-# levels = {0:'Non-Target', 1:'Target'}
-# dfpred['Status'] = [levels[x] for x in dfpred['Hasil']]
-# print(dfpred)
+
 li=[]
 for i in prediksi:
     if i ==1:
@@ -60,5 +57,5 @@ for i in prediksi:
         li.append('Non-Target')
 dfpred['Status']=li
 print(dfpred)
-# print(li)
+
 
