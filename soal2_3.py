@@ -1,4 +1,5 @@
 '''
+                    Name  Age  Overall  Potential      Status
 0       Andik Vermansyah   27       87         90  Non-Target
 1     Awan Setho Raharjo   22       75         83  Non-Target
 2      Bambang Pamungkas   38       85         75  Non-Target
@@ -21,12 +22,12 @@ df_n=df[['Name','Age','Overall','Potential']] #buat df lebih mudah dilihat
 xao=df_n[(df_n['Age']<=25)&(df_n['Overall']>=80)&(df_n['Potential']>=80)]
 ind_xao=xao.index.tolist() #index yang target
 df_n['Status']=['Target' if i in ind_xao else 'Non_Target' for i in range(len(df_n.index))]
-
 # print(df_n.head(10))
+
 from sklearn.preprocessing import LabelEncoder
 lab=LabelEncoder()
 df_new=df_n #mau di drop kolom statusnya
-df_new['Status_en']=lab.fit_transform(df_n['Status'])
+df_new['Status_en']=lab.fit_transform(df_new['Status'])
 df_new=df_new.drop(['Status'],axis='columns')
 # print(df_new.head(10))
 untukx=df_new[['Age','Overall','Potential']]
@@ -45,17 +46,11 @@ fifaTree.fit(x_trainset,y_trainset)
 
 ##### PREDICT
 dfpred=pd.read_csv('prediksisoal2.csv')
-print(dfpred.head())
-x=dfpred.iloc[:,1:]
+# print(dfpred.head())
+x=dfpred.iloc[:,1:] #parameter prediksi
 prediksi=fifaTree.predict(x)
-
-li=[]
-for i in prediksi:
-    if i ==1:
-        li.append('Target')
-    else:
-        li.append('Non-Target')
-dfpred['Status']=li
+levels = {0:'Non-Target', 1:'Target'}
+dfpred['Status'] = [levels[x] for x in prediksi]
 print(dfpred)
 
 

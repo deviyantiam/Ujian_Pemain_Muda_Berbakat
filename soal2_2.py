@@ -1,35 +1,36 @@
 '''
 Berdasarkan model yang saya buat, paling bagus decision tree dengan rincian dibawah
 DecisionTrees's Accuracy:  1.0
-Logistic's Accuracy:  0.9924949661358228
-KNN's Accuracy:  0.9981695039355666
+Logistic's Accuracy:  0.9939593629873695
+KNN's Accuracy:  0.9989017023613399
 Cross_Val_Score untuk Decision Tree 1.0
-Cross_Val_Score untuk Linear Regression 0.9927024482109229
-Cross_Val_Score untuk KNN 0.9988229755178907
+Cross_Val_Score untuk Linear Regression 0.9924935920908092
+Cross_Val_Score untuk KNN 0.9989625289881606
 '''
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+
 df=pd.read_csv('data.csv')
 # print(list(df))
 df_n=df[['Name','Age','Overall','Potential']] #buat df lebih mudah dilihat
 #Check if there's any missing values in the dataset
 df_n=df_n.replace(['-','n.a'],np.nan)
 df_n=df_n.fillna(0)
-print('Jumlah data yang bernilai 0 :')
-print(df_n.isnull().sum())
+# print('Jumlah data yang bernilai 0 :')
+# print(df_n.isnull().sum())
 # print(len(df))
 # print(df.head())
 
 xao=df_n[(df_n['Age']<=25)&(df_n['Overall']>=80)&(df_n['Potential']>=80)]
 ind_xao=xao.index.tolist() #index yang target
 df_n['Status']=['Target' if i in ind_xao else 'Non_Target' for i in range(len(df_n.index))]
-
 # print(df_n.head(10))
+
 from sklearn.preprocessing import LabelEncoder
 lab=LabelEncoder()
 df_new=df_n #mau di drop kolom statusnya
-df_new['Status_en']=lab.fit_transform(df_n['Status']) ####0 bukan target, 1 target
+df_new['Status_en']=lab.fit_transform(df_new['Status']) ####0 bukan target, 1 target
 df_new=df_new.drop(['Status'],axis='columns')
 # print(df_new.head(10))
 untukx=df_new[['Age','Overall','Potential']]
@@ -76,7 +77,7 @@ print("Logistic's Accuracy: ", metrics.accuracy_score(y_testset, predlr))
 ###====================================================================
 ##KNN
 from sklearn.neighbors import KNeighborsClassifier
-k = 3 #paling bagus kalau k=3 liat di evaluation
+k = 11 #paling bagus di gambar pada step evaluation
 #Train Model and Predict  
 neigh = KNeighborsClassifier(n_neighbors = k).fit(x_trainset,y_trainset)
 predknn = neigh.predict(x_testset)
@@ -85,10 +86,9 @@ from sklearn import metrics
 print("KNN's Accuracy: ", metrics.accuracy_score(y_testset, predknn))
 '''
 ## Evaluation buat KNN
-Ks = 10
+Ks = round((len(x_testset)+len(x_trainset))**.5) ##akar dari jumlah data
 mean_acc = np.zeros((Ks-1))
 std_acc = np.zeros((Ks-1))
-ConfustionMx = [];
 for n in range(1,Ks):
     neigh = KNeighborsClassifier(n_neighbors = n).fit(x_trainset,y_trainset)
     yhat=neigh.predict(x_testset)
@@ -103,8 +103,9 @@ plt.xlabel('Number of Nabors (K)')
 plt.tight_layout()
 plt.show()
 '''
-###====================================================================
-###CROSSVALL
+
+# ###====================================================================
+# ###CROSSVALL
 from sklearn.model_selection import cross_val_score
 acctree = cross_val_score(fifaTree,x_trainset,y_trainset,cv=kf) #kf udah diassigned di atas
 print('Cross_Val_Score untuk Decision Tree',acctree.mean())
@@ -112,5 +113,4 @@ accreg = cross_val_score(modellr,x_trainset,y_trainset,cv=kf) #kf udah diassigne
 print('Cross_Val_Score untuk Linear Regression',accreg.mean())
 accknn = cross_val_score(neigh,x_trainset,y_trainset,cv=kf) #kf udah diassigned di atas
 print('Cross_Val_Score untuk KNN',accknn.mean())
-
 
